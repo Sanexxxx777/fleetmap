@@ -1,0 +1,308 @@
+[
+  {
+    "pid": 10000,
+    "name": "api-gateway",
+    "pm_id": 0,
+    "monit": {
+      "memory": 47075328,
+      "cpu": 1.6
+    },
+    "pm2_env": {
+      "name": "api-gateway",
+      "pm_id": 0,
+      "status": "online",
+      "pm_uptime": 1783226599115,
+      "restart_time": 0,
+      "exec_mode": "fork_mode"
+    }
+  },
+  {
+    "pid": 10001,
+    "name": "jobs-worker",
+    "pm_id": 2,
+    "monit": {
+      "memory": 0,
+      "cpu": 0
+    },
+    "pm2_env": {
+      "name": "jobs-worker",
+      "pm_id": 2,
+      "status": "stopped",
+      "pm_uptime": 1784151733988,
+      "restart_time": 3,
+      "exec_mode": "fork_mode"
+    }
+  },
+  {
+    "pid": 10002,
+    "name": "ws-relay",
+    "pm_id": 3,
+    "monit": {
+      "memory": 195866624,
+      "cpu": 0
+    },
+    "pm2_env": {
+      "name": "ws-relay",
+      "pm_id": 3,
+      "status": "online",
+      "pm_uptime": 1784099405455,
+      "restart_time": 4,
+      "exec_mode": "fork_mode"
+    }
+  },
+  {
+    "pid": 10003,
+    "name": "tick-recorder",
+    "pm_id": 7,
+    "monit": {
+      "memory": 31178752,
+      "cpu": 0
+    },
+    "pm2_env": {
+      "name": "tick-recorder",
+      "pm_id": 7,
+      "status": "online",
+      "pm_uptime": 1783475040931,
+      "restart_time": 2,
+      "exec_mode": "fork_mode"
+    }
+  },
+  {
+    "pid": 10004,
+    "name": "alerts-bot",
+    "pm_id": 8,
+    "monit": {
+      "memory": 28884992,
+      "cpu": 0
+    },
+    "pm2_env": {
+      "name": "alerts-bot",
+      "pm_id": 8,
+      "status": "online",
+      "pm_uptime": 1783252386035,
+      "restart_time": 1,
+      "exec_mode": "fork_mode"
+    }
+  },
+  {
+    "pid": 10005,
+    "name": "site-frontend",
+    "pm_id": 10,
+    "monit": {
+      "memory": 0,
+      "cpu": 0
+    },
+    "pm2_env": {
+      "name": "site-frontend",
+      "pm_id": 10,
+      "status": "stopped",
+      "pm_uptime": 1783242887386,
+      "restart_time": 0,
+      "exec_mode": "fork_mode"
+    }
+  },
+  {
+    "pid": 10006,
+    "name": "billing",
+    "pm_id": 11,
+    "monit": {
+      "memory": 104005632,
+      "cpu": 0
+    },
+    "pm2_env": {
+      "name": "billing",
+      "pm_id": 11,
+      "status": "online",
+      "pm_uptime": 1783682594876,
+      "restart_time": 2,
+      "exec_mode": "fork_mode"
+    }
+  },
+  {
+    "pid": 10007,
+    "name": "scraper",
+    "pm_id": 12,
+    "monit": {
+      "memory": 48414720,
+      "cpu": 0
+    },
+    "pm2_env": {
+      "name": "scraper",
+      "pm_id": 12,
+      "status": "online",
+      "pm_uptime": 1783929278806,
+      "restart_time": 4,
+      "exec_mode": "fork_mode"
+    }
+  },
+  {
+    "pid": 10008,
+    "name": "mail-sender",
+    "pm_id": 13,
+    "monit": {
+      "memory": 12210176,
+      "cpu": 0
+    },
+    "pm2_env": {
+      "name": "mail-sender",
+      "pm_id": 13,
+      "status": "online",
+      "pm_uptime": 1783242988727,
+      "restart_time": 0,
+      "exec_mode": "fork_mode"
+    }
+  },
+  {
+    "pid": 10009,
+    "name": "search-indexer",
+    "pm_id": 14,
+    "monit": {
+      "memory": 429961216,
+      "cpu": 0
+    },
+    "pm2_env": {
+      "name": "search-indexer",
+      "pm_id": 14,
+      "status": "online",
+      "pm_uptime": 1783913725651,
+      "restart_time": 13,
+      "exec_mode": "fork_mode"
+    }
+  },
+  {
+    "pid": 10010,
+    "name": "cache-warmer",
+    "pm_id": 15,
+    "monit": {
+      "memory": 70541312,
+      "cpu": 0
+    },
+    "pm2_env": {
+      "name": "cache-warmer",
+      "pm_id": 15,
+      "status": "online",
+      "pm_uptime": 1783295719316,
+      "restart_time": 1,
+      "exec_mode": "fork_mode"
+    }
+  },
+  {
+    "pid": 10011,
+    "name": "metrics-agent",
+    "pm_id": 18,
+    "monit": {
+      "memory": 63152128,
+      "cpu": 0
+    },
+    "pm2_env": {
+      "name": "metrics-agent",
+      "pm_id": 18,
+      "status": "online",
+      "pm_uptime": 1784015565479,
+      "restart_time": 15,
+      "exec_mode": "fork_mode"
+    }
+  },
+  {
+    "pid": 10012,
+    "name": "report-bot",
+    "pm_id": 19,
+    "monit": {
+      "memory": 466092032,
+      "cpu": 0
+    },
+    "pm2_env": {
+      "name": "report-bot",
+      "pm_id": 19,
+      "status": "online",
+      "pm_uptime": 1784011439182,
+      "restart_time": 16,
+      "exec_mode": "fork_mode"
+    }
+  },
+  {
+    "pid": 10013,
+    "name": "cron-runner",
+    "pm_id": 20,
+    "monit": {
+      "memory": 0,
+      "cpu": 0
+    },
+    "pm2_env": {
+      "name": "cron-runner",
+      "pm_id": 20,
+      "status": "stopped",
+      "pm_uptime": 1783475041179,
+      "restart_time": 61,
+      "exec_mode": "fork_mode"
+    }
+  },
+  {
+    "pid": 10014,
+    "name": "auth-service",
+    "pm_id": 21,
+    "monit": {
+      "memory": 20758528,
+      "cpu": 0
+    },
+    "pm2_env": {
+      "name": "auth-service",
+      "pm_id": 21,
+      "status": "online",
+      "pm_uptime": 1783642167620,
+      "restart_time": 1,
+      "exec_mode": "fork_mode"
+    }
+  },
+  {
+    "pid": 10015,
+    "name": "image-resizer",
+    "pm_id": 22,
+    "monit": {
+      "memory": 168538112,
+      "cpu": 0
+    },
+    "pm2_env": {
+      "name": "image-resizer",
+      "pm_id": 22,
+      "status": "online",
+      "pm_uptime": 1784199078677,
+      "restart_time": 2,
+      "exec_mode": "fork_mode"
+    }
+  },
+  {
+    "pid": 10016,
+    "name": "webhook-relay",
+    "pm_id": 25,
+    "monit": {
+      "memory": 56307712,
+      "cpu": 0
+    },
+    "pm2_env": {
+      "name": "webhook-relay",
+      "pm_id": 25,
+      "status": "online",
+      "pm_uptime": 1784199760840,
+      "restart_time": 0,
+      "exec_mode": "fork_mode"
+    }
+  },
+  {
+    "pid": 10017,
+    "name": "log-shipper",
+    "pm_id": 26,
+    "monit": {
+      "memory": 19472384,
+      "cpu": 0
+    },
+    "pm2_env": {
+      "name": "log-shipper",
+      "pm_id": 26,
+      "status": "online",
+      "pm_uptime": 1784199760843,
+      "restart_time": 0,
+      "exec_mode": "fork_mode"
+    }
+  }
+]

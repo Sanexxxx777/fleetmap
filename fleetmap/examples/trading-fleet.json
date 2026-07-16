@@ -1,0 +1,34 @@
+{
+  "title": "Trading fleet — example",
+  "subtitle": "Fictional setup: two VPS, market-data relay, strategy bots, Telegram reporting",
+  "groups": [
+    { "id": "vps-data", "label": "VPS · data", "note": "2 CPU / 4 GB" },
+    { "id": "vps-trade", "label": "VPS · trading", "note": "4 CPU / 8 GB" }
+  ],
+  "nodes": [
+    { "id": "exchange-ws", "label": "Exchange WS", "kind": "external", "note": "public market-data stream" },
+    { "id": "oracle-ws", "label": "Price oracle WS", "kind": "external" },
+    { "id": "relay", "label": "ws-relay", "kind": "feed", "group": "vps-data", "health": "online", "meta": { "pm2": "0", "mem": "38 MB" } },
+    { "id": "recorder", "label": "tick-recorder", "kind": "process", "group": "vps-data", "health": "online", "meta": { "pm2": "1", "uptime": "12d" } },
+    { "id": "ticks-db", "label": "ticks.jsonl", "kind": "database", "group": "vps-data" },
+    { "id": "alpha-bot", "label": "alpha-bot", "kind": "process", "group": "vps-trade", "health": "online", "meta": { "pm2": "0", "mem": "112 MB" } },
+    { "id": "beta-bot", "label": "beta-bot", "kind": "process", "group": "vps-trade", "health": "stopped", "meta": { "pm2": "1" } },
+    { "id": "state-db", "label": "state.sqlite", "kind": "database", "group": "vps-trade" },
+    { "id": "report-bot", "label": "report-bot", "kind": "bot", "group": "vps-trade", "health": "online", "meta": { "pm2": "2" } },
+    { "id": "telegram", "label": "Telegram", "kind": "external" },
+    { "id": "exchange-api", "label": "Exchange REST", "kind": "external" }
+  ],
+  "edges": [
+    { "from": "exchange-ws", "to": "relay", "kind": "ws", "label": "trades" },
+    { "from": "oracle-ws", "to": "relay", "kind": "ws", "label": "prices" },
+    { "from": "relay", "to": "recorder", "kind": "ws" },
+    { "from": "recorder", "to": "ticks-db", "kind": "file" },
+    { "from": "relay", "to": "alpha-bot", "kind": "ws", "label": ":7788" },
+    { "from": "relay", "to": "beta-bot", "kind": "ws", "label": ":7788" },
+    { "from": "alpha-bot", "to": "exchange-api", "kind": "http", "label": "orders" },
+    { "from": "alpha-bot", "to": "state-db", "kind": "db" },
+    { "from": "beta-bot", "to": "state-db", "kind": "db" },
+    { "from": "alpha-bot", "to": "report-bot", "kind": "ipc" },
+    { "from": "report-bot", "to": "telegram", "kind": "tg", "label": "fills, PnL" }
+  ]
+}

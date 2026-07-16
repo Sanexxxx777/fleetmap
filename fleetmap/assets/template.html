@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE}} — fleetmap</title>
+<style>
+:root[data-theme="dark"]{
+  --bg:#0b0d12; --panel:#12151c; --panel-border:#232733; --text:#e7e9ee; --text-muted:#8b93a7; --accent:#6ea8fe;
+  --node-bg:#171a22; --node-border:#2c313f; --group-bg:#10131a; --group-border:#262b38; --group-label:#9aa4bd;
+  --kind-process:#6ea8fe; --kind-feed:#58d0c9; --kind-database:#f2b84b; --kind-bot:#b389f0; --kind-queue:#f0788a; --kind-web:#7bd88f; --kind-external:#9aa4bd;
+  --health-online:#3ecf6e; --health-stopped:#7a8299; --health-errored:#ef5959; --health-unknown:#e8c547;
+  --edge-ws:#6ea8fe; --edge-http:#7bd88f; --edge-db:#f2b84b; --edge-tg:#3fb6f2; --edge-ipc:#b389f0; --edge-file:#9aa4bd;
+  --shadow: 0 8px 24px rgba(0,0,0,.35);
+}
+:root[data-theme="light"]{
+  --bg:#f5f6f8; --panel:#ffffff; --panel-border:#e1e4ea; --text:#1b1e27; --text-muted:#5a6172; --accent:#2563eb;
+  --node-bg:#ffffff; --node-border:#d7dbe4; --group-bg:#eef0f4; --group-border:#d7dbe4; --group-label:#5a6172;
+  --kind-process:#2563eb; --kind-feed:#0d9488; --kind-database:#b6791a; --kind-bot:#7c3aed; --kind-queue:#d6336c; --kind-web:#15803d; --kind-external:#5a6172;
+  --health-online:#16a34a; --health-stopped:#8a90a0; --health-errored:#dc2626; --health-unknown:#ca8a04;
+  --edge-ws:#2563eb; --edge-http:#15803d; --edge-db:#b6791a; --edge-tg:#0ea5e9; --edge-ipc:#7c3aed; --edge-file:#5a6172;
+  --shadow: 0 8px 24px rgba(20,24,34,.08);
+}
+*{ box-sizing:border-box; }
+html,body{ margin:0; padding:0; }
+body{
+  background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  min-height:100vh;
+}
+.topbar{
+  position:sticky; top:0; z-index:10;
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+  padding:14px 24px; background:var(--panel); border-bottom:1px solid var(--panel-border);
+  box-shadow:var(--shadow);
+}
+.titles h1{ margin:0; font-size:17px; font-weight:700; }
+.subtitle{ margin:2px 0 0; font-size:12.5px; color:var(--text-muted); }
+.toolbar{ display:flex; align-items:center; gap:8px; }
+button{
+  font:inherit; font-size:13px; color:var(--text); background:var(--bg);
+  border:1px solid var(--panel-border); border-radius:8px; padding:7px 12px;
+  cursor:pointer; transition:border-color .15s, background .15s;
+}
+button:hover{ border-color:var(--accent); }
+.export-menu{ position:relative; }
+.export-menu-panel{
+  display:none; position:absolute; right:0; top:calc(100% + 6px);
+  background:var(--panel); border:1px solid var(--panel-border); border-radius:10px;
+  box-shadow:var(--shadow); padding:6px; flex-direction:column; gap:2px; min-width:140px;
+}
+.export-menu-panel.open{ display:flex; }
+.export-menu-panel button{ border:none; text-align:left; background:transparent; border-radius:6px; }
+.export-menu-panel button:hover{ background:var(--group-bg); border-color:transparent; }
+.canvas-wrap{ padding:28px; overflow:auto; }
+.canvas-wrap svg{ display:block; max-width:none; }
+.legend{
+  display:flex; flex-wrap:wrap; gap:28px;
+  padding:16px 24px 26px; border-top:1px solid var(--panel-border);
+}
+.legend-group{ display:flex; flex-wrap:wrap; align-items:center; gap:10px; }
+.legend-title{ font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-muted); margin-right:2px; }
+.legend-item{ display:inline-flex; align-items:center; gap:6px; font-size:12.5px; color:var(--text-muted); }
+.legend-icon{ font-size:14px; line-height:1; }
+.legend-kind-process{ color:var(--kind-process); }
+.legend-kind-feed{ color:var(--kind-feed); }
+.legend-kind-database{ color:var(--kind-database); }
+.legend-kind-bot{ color:var(--kind-bot); }
+.legend-kind-queue{ color:var(--kind-queue); }
+.legend-kind-web{ color:var(--kind-web); }
+.legend-kind-external{ color:var(--kind-external); }
+.legend-line{ display:inline-block; width:22px; height:0; border-top-width:2.5px; border-top-style:solid; }
+.legend-edge-ws{ border-color:var(--edge-ws); border-top-width:3px; }
+.legend-edge-http{ border-color:var(--edge-http); }
+.legend-edge-db{ border-color:var(--edge-db); border-top-style:dashed; }
+.legend-edge-tg{ border-color:var(--edge-tg); border-top-style:dotted; }
+.legend-edge-ipc{ border-color:var(--edge-ipc); border-top-style:dotted; }
+.legend-edge-file{ border-color:var(--edge-file); border-top-style:dashed; }
+.legend-dot{ display:inline-block; width:9px; height:9px; border-radius:50%; }
+.legend-health-online{ background:var(--health-online); }
+.legend-health-stopped{ background:var(--health-stopped); }
+.legend-health-errored{ background:var(--health-errored); }
+.legend-health-unknown{ background:var(--health-unknown); }
+</style>
+</head>
+<body>
+<script>
+(function(){
+  try {
+    var saved = localStorage.getItem('fleetmap-theme');
+    var theme = saved || ((window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark');
+    document.documentElement.setAttribute('data-theme', theme);
+  } catch (e) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+})();
+</script>
+<header class="topbar">
+  <div class="titles">
+    <h1>{{TITLE}}</h1>
+    {{SUBTITLE}}
+  </div>
+  <div class="toolbar">
+    <button id="theme-toggle" title="Toggle theme (T)">☾</button>
+    <button id="copy-png-btn" title="Copy PNG to clipboard">Copy PNG</button>
+    <div class="export-menu">
+      <button id="export-toggle" title="Export (E)">Export ▾</button>
+      <div id="export-panel" class="export-menu-panel">
+        <button data-export="png1">PNG 1×</button>
+        <button data-export="png2">PNG 2×</button>
+        <button data-export="png4">PNG 4×</button>
+        <button data-export="svg">SVG file</button>
+      </div>
+    </div>
+  </div>
+</header>
+<main class="canvas-wrap">
+{{SVG}}
+</main>
+<footer class="legend">
+{{LEGEND}}
+</footer>
+<script>
+(function(){
+  function getSvgEl(){ return document.querySelector('.fleetmap-svg'); }
+
+  function applyTheme(theme){
+    document.documentElement.setAttribute('data-theme', theme);
+    var svg = getSvgEl();
+    if (svg) svg.setAttribute('data-theme', theme);
+    var btn = document.getElementById('theme-toggle');
+    if (btn) btn.textContent = theme === 'dark' ? '☾' : '☀';
+    try { localStorage.setItem('fleetmap-theme', theme); } catch (e) {}
+  }
+
+  function serializeSvg(svgEl){
+    var clone = svgEl.cloneNode(true);
+    clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    return new XMLSerializer().serializeToString(clone);
+  }
+
+  function downloadBlob(blob, filename){
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
+  }
+
+  function downloadSvg(){
+    var svgEl = getSvgEl();
+    if (!svgEl) return;
+    var blob = new Blob([serializeSvg(svgEl)], { type: 'image/svg+xml;charset=utf-8' });
+    downloadBlob(blob, 'fleetmap.svg');
+  }
+
+  function rasterize(scale, cb){
+    var svgEl = getSvgEl();
+    if (!svgEl) return;
+    var w = parseInt(svgEl.getAttribute('width'), 10);
+    var h = parseInt(svgEl.getAttribute('height'), 10);
+    var blob = new Blob([serializeSvg(svgEl)], { type: 'image/svg+xml;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var img = new Image();
+    img.onload = function(){
+      var canvas = document.createElement('canvas');
+      canvas.width = w * scale;
+      canvas.height = h * scale;
+      var ctx = canvas.getContext('2d');
+      var bg = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
+      ctx.fillStyle = bg || '#0b0d12';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      URL.revokeObjectURL(url);
+      cb(canvas);
+    };
+    img.onerror = function(err){
+      URL.revokeObjectURL(url);
+      console.error('fleetmap: svg rasterize failed', err);
+    };
+    img.src = url;
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    var current = document.documentElement.getAttribute('data-theme') || 'dark';
+    applyTheme(current);
+
+    var themeBtn = document.getElementById('theme-toggle');
+    themeBtn.addEventListener('click', function(){
+      var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      applyTheme(next);
+    });
+
+    var exportToggle = document.getElementById('export-toggle');
+    var exportPanel = document.getElementById('export-panel');
+    exportToggle.addEventListener('click', function(ev){
+      ev.stopPropagation();
+      exportPanel.classList.toggle('open');
+    });
+    exportPanel.addEventListener('click', function(ev){ ev.stopPropagation(); });
+    document.addEventListener('click', function(){ exportPanel.classList.remove('open'); });
+
+    document.querySelectorAll('[data-export]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var kind = btn.getAttribute('data-export');
+        exportPanel.classList.remove('open');
+        if (kind === 'svg') { downloadSvg(); return; }
+        var scale = kind === 'png1' ? 1 : kind === 'png2' ? 2 : 4;
+        rasterize(scale, function(canvas){
+          canvas.toBlob(function(blob){ downloadBlob(blob, 'fleetmap-' + scale + 'x.png'); }, 'image/png');
+        });
+      });
+    });
+
+    document.getElementById('copy-png-btn').addEventListener('click', function(){
+      if (!navigator.clipboard || !window.ClipboardItem) {
+        alert('Clipboard image API is not supported in this browser.');
+        return;
+      }
+      rasterize(2, function(canvas){
+        canvas.toBlob(function(blob){
+          navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]).catch(function(err){
+            console.error('fleetmap: copy to clipboard failed', err);
+          });
+        }, 'image/png');
+      });
+    });
+
+    document.addEventListener('keydown', function(e){
+      var tag = e.target && e.target.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+      if (e.key === 't' || e.key === 'T') themeBtn.click();
+      if (e.key === 'e' || e.key === 'E') exportToggle.click();
+    });
+  });
+})();
+</script>
+</body>
+</html>

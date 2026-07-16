@@ -1,0 +1,27 @@
+{
+  "title": "Web platform fleet — example",
+  "subtitle": "Fictional setup: API + workers + queue on one host, managed services outside",
+  "groups": [
+    { "id": "app-host", "label": "app-host", "note": "pm2, Ubuntu 24.04" }
+  ],
+  "nodes": [
+    { "id": "users", "label": "Browsers", "kind": "external" },
+    { "id": "nginx", "label": "nginx", "kind": "web", "group": "app-host", "health": "online" },
+    { "id": "api", "label": "api", "kind": "process", "group": "app-host", "health": "online", "meta": { "pm2": "0", "mem": "140 MB" } },
+    { "id": "worker", "label": "jobs-worker", "kind": "process", "group": "app-host", "health": "errored", "meta": { "pm2": "1", "restarts": "17" } },
+    { "id": "queue", "label": "redis queue", "kind": "queue", "group": "app-host", "health": "online" },
+    { "id": "pg", "label": "PostgreSQL", "kind": "database", "group": "app-host", "health": "online" },
+    { "id": "mail", "label": "Mail API", "kind": "external" },
+    { "id": "s3", "label": "Object storage", "kind": "external" }
+  ],
+  "edges": [
+    { "from": "users", "to": "nginx", "kind": "http", "label": "443" },
+    { "from": "nginx", "to": "api", "kind": "http", "label": "127.0.0.1:3000" },
+    { "from": "api", "to": "pg", "kind": "db" },
+    { "from": "api", "to": "queue", "kind": "ipc", "label": "enqueue" },
+    { "from": "queue", "to": "worker", "kind": "ipc", "label": "consume" },
+    { "from": "worker", "to": "mail", "kind": "http" },
+    { "from": "worker", "to": "s3", "kind": "http", "label": "uploads" },
+    { "from": "worker", "to": "pg", "kind": "db" }
+  ]
+}

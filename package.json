@@ -1,0 +1,17 @@
+{
+  "name": "fleetmap",
+  "version": "0.1.0",
+  "description": "JSON fleet manifest -> HTML fleet diagram",
+  "type": "module",
+  "license": "MIT",
+  "author": "Aleksandr Shulgin (@Aleksandr_NFA)",
+  "bin": {
+    "fleetmap": "./fleetmap/bin/fleetmap.mjs"
+  },
+  "scripts": {
+    "test": "node --test \"fleetmap/test/**/*.test.mjs\""
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
