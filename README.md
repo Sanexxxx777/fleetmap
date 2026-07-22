@@ -1,6 +1,10 @@
 # fleetmap
 
+<!-- TODO: demo GIF (20-40s) -->
+
 Turn a running process fleet into a clean, self-contained architecture diagram — one HTML file, no dependencies, dark/light themes, PNG/SVG export.
+
+**RU:** fleetmap превращает живой набор процессов (pm2/systemd) в самодостаточную HTML-диаграмму архитектуры — один файл, без зависимостей, светлая/тёмная тема, экспорт PNG/SVG. Строит карту по снапшоту `pm2 jlist` или по написанному вручную JSON.
 
 Most diagram tools draw the architecture you *describe*. fleetmap draws the one you actually *run*: point it at a `pm2 jlist` snapshot and it lays out every process, feed, database and bot, grouped by host, with live health colors. Or write the fleet by hand in a small JSON format when you want to document a design.
 
@@ -68,6 +72,10 @@ npm test
 ## Inspired by
 
 The "describe it → validate against a JSON schema → deterministic renderer → single self-contained HTML" approach is borrowed from [tt-a1i/archify](https://github.com/tt-a1i/archify) (MIT). fleetmap is not a fork — it reuses that idea for a different job (live process fleets rather than free-form architecture) with its own schema, renderer, and a pm2 collector. Credit to archify for the pattern.
+
+## Contact
+
+Questions or issues: [github.com/Sanexxxx777](https://github.com/Sanexxxx777).
 
 ## License
 
